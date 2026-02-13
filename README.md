@@ -54,7 +54,6 @@ The following six machine learning classification models were implemented and ev
 | Random Forest | 0.953036 | 0.808093 | 0.689655 | 0.163934 | 0.264901 | 0.321406 |
 | XGBoost | 0.95092 | 0.795012 | 0.565217 | 0.213115 | 0.309524 | 0.327039 |
 
-*(Replace XX with actual values obtained from experiments)*
 
 ---
 
