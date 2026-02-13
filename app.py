@@ -4,6 +4,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+from sklearn.model_selection import train_test_split
 from sklearn.metrics import (
     accuracy_score,
     roc_auc_score,
@@ -16,13 +17,13 @@ from sklearn.metrics import (
 )
 
 # --------------------------------------------------
-# Import your own PY-based modules
+# Import PY-based model pipeline
 # --------------------------------------------------
 from model.train_models import train_all_models
 from model.preprocessing import preprocess_dataframe
 
 # --------------------------------------------------
-# Page Configuration
+# Page Config
 # --------------------------------------------------
 st.set_page_config(
     page_title="E-Commerce Fraud Detection",
@@ -30,47 +31,45 @@ st.set_page_config(
 )
 
 # --------------------------------------------------
-# App Title & Description
+# Title
 # --------------------------------------------------
 st.title("💳 E-Commerce Fraud Detection System")
 
 st.write("""
-This Streamlit application demonstrates multiple machine learning
-classification models for detecting fraudulent e-commerce transactions.
-
-**Features:**
-- Upload test dataset (CSV)
-- Select ML model
-- View evaluation metrics
-- Confusion matrix & classification report
+This application trains machine learning models on historical e-commerce data
+and evaluates fraud detection performance on an uploaded dataset.
 """)
 
 # --------------------------------------------------
-# Load & Train Models ONCE (Cached in Memory)
+# Train Models ONCE (Proper Train/Test Split)
 # --------------------------------------------------
 @st.cache_resource
-def load_models_and_preprocessors():
-    """
-    Trains all models once at application startup.
-    Uses only .py model implementations (no .pkl).
-    """
-    df_train = pd.read_csv("Fraudulent_E-Commerce_Transaction_Data_2.csv")
+def load_trained_models():
+    df = pd.read_csv("Fraudulent_E-Commerce_Transaction_Data_2.csv")
+
+    df_train, _ = train_test_split(
+        df,
+        test_size=0.2,
+        stratify=df["Is Fraudulent"],
+        random_state=42
+    )
+
     models, encoders, scaler = train_all_models(df_train)
     return models, encoders, scaler
 
 
-models, encoders, scaler = load_models_and_preprocessors()
+models, encoders, scaler = load_trained_models()
 
 # --------------------------------------------------
-# File Upload
+# Upload Dataset (TEST ONLY)
 # --------------------------------------------------
 uploaded_file = st.file_uploader(
-    "Upload test dataset (CSV only)",
+    "Upload test dataset (CSV)",
     type=["csv"]
 )
 
 # --------------------------------------------------
-# Main App Logic
+# App Logic
 # --------------------------------------------------
 if uploaded_file is not None:
 
@@ -80,10 +79,10 @@ if uploaded_file is not None:
     st.dataframe(df_test.head())
 
     # --------------------------------------------------
-    # Preprocess uploaded dataset (NO fitting)
+    # Preprocess TEST data (NO fitting)
     # --------------------------------------------------
     try:
-        X, X_scaled, y, _, _ = preprocess_dataframe(
+        X_test, X_test_scaled, y_test, _, _ = preprocess_dataframe(
             df_test,
             fit=False,
             encoders=encoders,
@@ -96,22 +95,22 @@ if uploaded_file is not None:
     # --------------------------------------------------
     # Model Selection
     # --------------------------------------------------
-    st.subheader("⚙️ Model Selection")
+    st.subheader("⚙️ Select Model")
 
     selected_model_name = st.selectbox(
-        "Select Machine Learning Model",
+        "Choose Machine Learning Model",
         list(models.keys())
     )
 
     model = models[selected_model_name]
 
     # --------------------------------------------------
-    # Select Correct Feature Set
+    # Choose correct feature space
     # --------------------------------------------------
     if selected_model_name in ["Logistic Regression", "KNN", "Naive Bayes"]:
-        X_input = X_scaled
+        X_input = X_test_scaled
     else:
-        X_input = X
+        X_input = X_test
 
     # --------------------------------------------------
     # Predictions
@@ -124,27 +123,27 @@ if uploaded_file is not None:
         y_prob = y_pred
 
     # --------------------------------------------------
-    # Display Metrics
+    # Metrics
     # --------------------------------------------------
     st.subheader("📊 Evaluation Metrics")
 
     col1, col2, col3 = st.columns(3)
 
-    col1.metric("Accuracy", round(accuracy_score(y, y_pred), 4))
-    col1.metric("AUC", round(roc_auc_score(y, y_prob), 4))
+    col1.metric("Accuracy", round(accuracy_score(y_test, y_pred), 4))
+    col1.metric("AUC", round(roc_auc_score(y_test, y_prob), 4))
 
-    col2.metric("Precision", round(precision_score(y, y_pred), 4))
-    col2.metric("Recall", round(recall_score(y, y_pred), 4))
+    col2.metric("Precision", round(precision_score(y_test, y_pred), 4))
+    col2.metric("Recall", round(recall_score(y_test, y_pred), 4))
 
-    col3.metric("F1 Score", round(f1_score(y, y_pred), 4))
-    col3.metric("MCC", round(matthews_corrcoef(y, y_pred), 4))
+    col3.metric("F1 Score", round(f1_score(y_test, y_pred), 4))
+    col3.metric("MCC", round(matthews_corrcoef(y_test, y_pred), 4))
 
     # --------------------------------------------------
     # Confusion Matrix
     # --------------------------------------------------
     st.subheader("🧮 Confusion Matrix")
 
-    cm = confusion_matrix(y, y_pred)
+    cm = confusion_matrix(y_test, y_pred)
 
     fig, ax = plt.subplots()
     sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", ax=ax)
@@ -157,7 +156,8 @@ if uploaded_file is not None:
     # Classification Report
     # --------------------------------------------------
     st.subheader("📄 Classification Report")
-    st.text(classification_report(y, y_pred))
+    st.text(classification_report(y_test, y_pred))
 
 else:
-    st.warning("Please upload a CSV file to begin.")
+    st.info("Upload a CSV file to evaluate fraud detection models.")
+
