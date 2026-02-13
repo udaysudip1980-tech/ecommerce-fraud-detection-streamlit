@@ -6,8 +6,11 @@ from model.naive_bayes import build as nb
 from model.random_forest import build as rf
 from model.xgboost_model import build as xgb
 
-def train_all_models(df):
-    X, X_scaled, y, encoders, scaler = preprocess_dataframe(df, fit=True)
+def train_all_models(df_train):
+    # Fit preprocessing ONLY on training data
+    X_train, X_train_scaled, y_train, encoders, scaler = preprocess_dataframe(
+        df_train, fit=True
+    )
 
     models = {
         "Logistic Regression": lr(),
@@ -20,8 +23,9 @@ def train_all_models(df):
 
     for name, model in models.items():
         if name in ["Logistic Regression", "KNN", "Naive Bayes"]:
-            model.fit(X_scaled, y)
+            model.fit(X_train_scaled, y_train)
         else:
-            model.fit(X, y)
+            model.fit(X_train, y_train)
 
     return models, encoders, scaler
+
