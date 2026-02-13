@@ -1,8 +1,9 @@
+
 import streamlit as st
 import pandas as pd
-import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
 
-from joblib import load
 from sklearn.metrics import (
     accuracy_score,
     roc_auc_score,
@@ -14,11 +15,14 @@ from sklearn.metrics import (
     classification_report
 )
 
-import seaborn as sns
-import matplotlib.pyplot as plt
+# --------------------------------------------------
+# Import your own PY-based modules
+# --------------------------------------------------
+from model.train_models import train_all_models
+from model.preprocessing import preprocess_dataframe
 
 # --------------------------------------------------
-# Page Config
+# Page Configuration
 # --------------------------------------------------
 st.set_page_config(
     page_title="E-Commerce Fraud Detection",
@@ -26,90 +30,68 @@ st.set_page_config(
 )
 
 # --------------------------------------------------
-# Load Models, Scaler, and Label Encoders
-# --------------------------------------------------
-@st.cache_resource
-def load_artifacts():
-    models = {
-        "Logistic Regression": load("model/logistic_regression.pkl"),
-        "Decision Tree": load("model/decision_tree.pkl"),
-        "KNN": load("model/knn.pkl"),
-        "Naive Bayes": load("model/naive_bayes.pkl"),
-        "Random Forest": load("model/random_forest.pkl"),
-        "XGBoost": load("model/xgboost.pkl")
-    }
-    scaler = load("model/scaler.pkl")
-    label_encoders = load("model/label_encoders.pkl")
-    return models, scaler, label_encoders
-
-
-models, scaler, label_encoders = load_artifacts()
-
-# --------------------------------------------------
-# App Title
+# App Title & Description
 # --------------------------------------------------
 st.title("💳 E-Commerce Fraud Detection System")
 
 st.write("""
-This application allows you to:
-- Upload e-commerce transaction test data
-- Select a trained machine learning model
+This Streamlit application demonstrates multiple machine learning
+classification models for detecting fraudulent e-commerce transactions.
+
+**Features:**
+- Upload test dataset (CSV)
+- Select ML model
 - View evaluation metrics
-- Analyze fraud detection performance
+- Confusion matrix & classification report
 """)
+
+# --------------------------------------------------
+# Load & Train Models ONCE (Cached in Memory)
+# --------------------------------------------------
+@st.cache_resource
+def load_models_and_preprocessors():
+    """
+    Trains all models once at application startup.
+    Uses only .py model implementations (no .pkl).
+    """
+    df_train = pd.read_csv("Fraudulent_E-Commerce_Transaction_Data_2.csv")
+    models, encoders, scaler = train_all_models(df_train)
+    return models, encoders, scaler
+
+
+models, encoders, scaler = load_models_and_preprocessors()
 
 # --------------------------------------------------
 # File Upload
 # --------------------------------------------------
 uploaded_file = st.file_uploader(
-    "Upload test dataset (CSV file)",
+    "Upload test dataset (CSV only)",
     type=["csv"]
 )
 
 # --------------------------------------------------
-# Main Logic
+# Main App Logic
 # --------------------------------------------------
 if uploaded_file is not None:
 
-    df = pd.read_csv(uploaded_file)
+    df_test = pd.read_csv(uploaded_file)
 
     st.subheader("📄 Uploaded Dataset Preview")
-    st.dataframe(df.head())
+    st.dataframe(df_test.head())
 
     # --------------------------------------------------
-    # Drop columns not used in training
+    # Preprocess uploaded dataset (NO fitting)
     # --------------------------------------------------
-    drop_cols = [
-        "Transaction ID",
-        "Customer ID",
-        "IP Address",
-        "Shipping Address",
-        "Billing Address",
-        "Transaction Date"
-    ]
-
-    df = df.drop(columns=drop_cols, errors="ignore")
-
-    # --------------------------------------------------
-    # Encode categorical columns (MATCH TRAINING)
-    # --------------------------------------------------
-    for col, le in label_encoders.items():
-        if col in df.columns:
-            # Handle unseen labels safely
-            df[col] = df[col].apply(
-                lambda x: x if x in le.classes_ else le.classes_[0]
-            )
-            df[col] = le.transform(df[col])
-
-    # --------------------------------------------------
-    # Split features & target
-    # --------------------------------------------------
-    if "Is Fraudulent" not in df.columns:
-        st.error("Target column 'Is Fraudulent' not found in uploaded file.")
+    try:
+        X, X_scaled, y, _, _ = preprocess_dataframe(
+            df_test,
+            fit=False,
+            encoders=encoders,
+            scaler=scaler
+        )
+    except Exception as e:
+        st.error(f"Preprocessing error: {e}")
         st.stop()
-
-    X = df.drop("Is Fraudulent", axis=1)
-    y = df["Is Fraudulent"]
 
     # --------------------------------------------------
     # Model Selection
@@ -124,10 +106,10 @@ if uploaded_file is not None:
     model = models[selected_model_name]
 
     # --------------------------------------------------
-    # Scaling (only for required models)
+    # Select Correct Feature Set
     # --------------------------------------------------
     if selected_model_name in ["Logistic Regression", "KNN", "Naive Bayes"]:
-        X_input = scaler.transform(X)
+        X_input = X_scaled
     else:
         X_input = X
 
@@ -142,7 +124,7 @@ if uploaded_file is not None:
         y_prob = y_pred
 
     # --------------------------------------------------
-    # Metrics
+    # Display Metrics
     # --------------------------------------------------
     st.subheader("📊 Evaluation Metrics")
 
@@ -179,4 +161,3 @@ if uploaded_file is not None:
 
 else:
     st.warning("Please upload a CSV file to begin.")
-

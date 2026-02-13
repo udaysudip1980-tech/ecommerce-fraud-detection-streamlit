@@ -47,12 +47,12 @@ The following six machine learning classification models were implemented and ev
 
 | ML Model | Accuracy | AUC | Precision | Recall | F1 Score | MCC |
 |--------|---------|-----|----------|--------|----------|-----|
-| Logistic Regression | 0.95367 | 0.777792 | 0.857143 | 0.122951 | 0.215054 | 0.314442 |
-| Decision Tree | 0.920669 | 0.630713 | 0.266904 | 0.307377 | 0.285714 | 0.244619 |
-| KNN | 0.950709 | 0.624074 | 0.622222 | 0.114754 | 0.193772 | 0.252832 |
-| Naive Bayes | 0.938227 | 0.769832 | 0.333333 | 0.196721 | 0.247423 | 0.225695 |
-| Random Forest | 0.953036 | 0.808093 | 0.689655 | 0.163934 | 0.264901 | 0.321406 |
-| XGBoost | 0.95092 | 0.795012 | 0.565217 | 0.213115 | 0.309524 | 0.327039 |
+| Logistic Regression | 0.953415 | 0.77806 | 0.849711 | 0.120295 | 0.210753 | 0.309469 |
+| Decision Tree | 1 | 1 | 1 | 1 | 1 | 1 |
+| KNN | 0.95608 | 0.948233 | 0.883333 | 0.173486 | 0.290014 | 0.380403 |
+| Naive Bayes | 0.942456 | 0.773368 | 0.396396 | 0.216039 | 0.279661 | 0.265074 |
+| Random Forest | 1 | 1 | 1 | 1 | 1 | 1 |
+| XGBoost | 0.977109 | 0.99086 | 0.99708 | 0.55892 | 0.716308 | 0.737614 |
 
 
 ---
@@ -84,20 +84,22 @@ The app allows users to interactively analyze fraud detection performance using 
 ---
 
 ## 7. Project Structure
+
 project/
 │── app.py
 │── requirements.txt
 │── README.md
+│── Fraudulent_E-Commerce_Transaction_Data_2.csv
 │
 └── model/
-│── logistic_regression.pkl
-│── decision_tree.pkl
-│── knn.pkl
-│── naive_bayes.pkl
-│── random_forest.pkl
-│── xgboost.pkl
-│── scaler.pkl
-
+    │── preprocessing.py
+    │── logistic_regression.py
+    │── decision_tree.py
+    │── knn.py
+    │── naive_bayes.py
+    │── random_forest.py
+    │── xgboost_model.py
+    │── train_models.py
 
 ---
 
@@ -108,3 +110,4 @@ The application was deployed using Streamlit Community Cloud by connecting the G
 
 ## 9. Conclusion
 This project demonstrates an end-to-end machine learning workflow including data preprocessing, model training, evaluation, and deployment. Ensemble models such as Random Forest and XGBoost were observed to perform best for fraud detection tasks due to their ability to capture complex patterns in transactional data.
+
