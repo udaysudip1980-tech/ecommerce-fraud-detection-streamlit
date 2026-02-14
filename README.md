@@ -49,17 +49,17 @@ All models are implemented as Python source files (`.py`) as required.
 
 | ML Model | Accuracy | AUC | Precision | Recall | F1 Score | MCC |
 |--------|---------|-----|----------|--------|----------|-----|
-| Logistic Regression | 0.953415 | 0.77806 | 0.849711 | 0.120295 | 0.210753 | 0.309469 |
-| Decision Tree | 1 | 1 | 1 | 1 | 1 | 1 |
-| KNN | 0.95608 | 0.948233 | 0.883333 | 0.173486 | 0.290014 | 0.380403 |
-| Naive Bayes | 0.942456 | 0.773368 | 0.396396 | 0.216039 | 0.279661 | 0.265074 |
-| Random Forest | 1 | 1 | 1 | 1 | 1 | 1 |
-| XGBoost | 0.977109 | 0.99086 | 0.99708 | 0.55892 | 0.716308 | 0.737614 |
+| Logistic Regression | 0.953882 | 0.778199 | 0.861111 | 0.127049 | 0.221429 | 0.320507 |
+| Decision Tree | 0.897186 | 0.614457 | 0.188144 | 0.29918 | 0.231013 | 0.18452 |
+| KNN | 0.950709 | 0.62118  | 0.622222 | 0.114754 | 0.193772 | 0.252832 |
+| Naive Bayes | 0.937804 | 0.770417 | 0.328767 | 0.196721 | 0.246154 | 0.223623 |
+| Random Forest(Ensemble) | 0.952613 | 0.799907 | 0.692308 | 0.147541 | 0.243243 | 0.305397 |
+| XGBoost(Ensemble) | 0.949862 | 0.763527 | 0.54321  | 0.180328 | 0.270769 | 0.293369 |
 
 
 ---
 
-##  Observations on the performance of each model on the chosen dataset. 
+##  observations on the performance of each model on the chosen dataset. 
 
 | ML Model | Observation |
 |--------|------------|
@@ -67,5 +67,5 @@ All models are implemented as Python source files (`.py`) as required.
 | Decision Tree | Able to model non-linear relationships but prone to overfitting. |
 | kNN | Sensitive to feature scaling and computationally expensive for large datasets. |
 | Naive Bayes | Fast and efficient but assumes feature independence, which limits performance. |
-| Random Forest (Ensemble)  | Achieved strong overall performance by reducing overfitting through ensemble learning. |
-| XGBoost (Ensemble)  | Delivered the best performance with high AUC and MCC due to its boosting-based approach and regularization. |
+| Random Forest(Ensemble)  | Achieved strong overall performance by reducing overfitting through ensemble learning. |
+| XGBoost(Ensemble)  | Delivered the best performance with high AUC and MCC due to its boosting-based approach and regularization. |
