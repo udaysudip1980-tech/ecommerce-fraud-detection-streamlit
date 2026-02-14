@@ -7,7 +7,8 @@ from model.random_forest import build as rf
 from model.xgboost_model import build as xgb
 
 def train_all_models(df_train):
-    # Fit preprocessing ONLY on training data
+  
+    # Fit encoders and scaler only on training data
     X_train, X_train_scaled, y_train, encoders, scaler = preprocess_dataframe(
         df_train, fit=True
     )

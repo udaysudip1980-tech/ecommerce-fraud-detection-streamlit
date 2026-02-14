@@ -1,18 +1,18 @@
-# E-Commerce Fraud Detection using Machine Learning
+# E-Commerce Fraud Detection System
 
-## 1. Problem Statement
-Online e-commerce platforms face a significant challenge in detecting fraudulent transactions in real time. The objective of this project is to build and compare multiple machine learning classification models to accurately identify fraudulent e-commerce transactions based on transaction and customer-related features. The project also includes deploying an interactive Streamlit web application for real-time model evaluation.
+# a. Problem statement  
+This project focuses on detecting fraudulent e-commerce transactions using multiple machine learning classification models. The goal is to compare different algorithms and evaluate their effectiveness in identifying fraud.
+The project also includes a Streamlit web application that allows users to upload a dataset and evaluate model performance interactively.
 
----
-
-## 2. Dataset Description
-The dataset used in this project is a public e-commerce transaction dataset containing information related to customer behavior, transaction details, and payment methods.
+## b. Dataset description 
+The dataset used contains historical e-commerce transaction records with a binary target variable indicating whether a transaction is fraudulent.
+Some columns that are not useful for prediction (such as transaction ID and addresses) were removed during preprocessing.
 
 - Number of instances: 23,634
 - Number of features: 15
-- Target variable: **Is Fraudulent**
-  - 0 → Legitimate transaction
-  - 1 → Fraudulent transaction
+- Target variable: Is Fraudulent
+  - 0 → Valid transaction
+  - 1 → Fraud transaction
 
 ### Feature Types:
 - Numerical features: Transaction amount, account age, transaction frequency, etc.
@@ -22,16 +22,18 @@ Categorical features were label-encoded, and irrelevant identifier columns were 
 
 ---
 
-## 3. Models Used and Evaluation Metrics
+## c. Models used: 
 
-The following six machine learning classification models were implemented and evaluated on the same dataset:
+The following machine learning models were implemented:
 
-1. Logistic Regression  
-2. Decision Tree Classifier  
-3. K-Nearest Neighbors (KNN)  
-4. Naive Bayes (Gaussian)  
-5. Random Forest (Ensemble)  
-6. XGBoost (Ensemble)
+- Logistic Regression  
+- Decision Tree  
+- K-Nearest Neighbors (KNN)  
+- Naive Bayes  
+- Random Forest  
+- XGBoost  
+
+All models are implemented as Python source files (`.py`) as required.
 
 ### Evaluation Metrics:
 - Accuracy
@@ -43,7 +45,7 @@ The following six machine learning classification models were implemented and ev
 
 ---
 
-## 4. Model Performance Comparison
+## Comparison Table with the evaluation metrics calculated for all the models as below:  
 
 | ML Model | Accuracy | AUC | Precision | Recall | F1 Score | MCC |
 |--------|---------|-----|----------|--------|----------|-----|
@@ -57,57 +59,13 @@ The following six machine learning classification models were implemented and ev
 
 ---
 
-## 5. Observations on Model Performance
+##  observations on the performance of each model on the chosen dataset. 
 
 | ML Model | Observation |
 |--------|------------|
 | Logistic Regression | Performed well as a baseline model but struggled with capturing complex non-linear patterns in fraud data. |
 | Decision Tree | Able to model non-linear relationships but prone to overfitting. |
-| KNN | Sensitive to feature scaling and computationally expensive for large datasets. |
+| kNN | Sensitive to feature scaling and computationally expensive for large datasets. |
 | Naive Bayes | Fast and efficient but assumes feature independence, which limits performance. |
-| Random Forest | Achieved strong overall performance by reducing overfitting through ensemble learning. |
-| XGBoost | Delivered the best performance with high AUC and MCC due to its boosting-based approach and regularization. |
-
----
-
-## 6. Streamlit Web Application
-A Streamlit web application was developed and deployed to demonstrate the trained models.
-
-### Features:
-- CSV file upload (test data only)
-- Model selection dropdown
-- Display of evaluation metrics
-- Confusion matrix and classification report
-
-The app allows users to interactively analyze fraud detection performance using different machine learning models.
-
----
-
-## 7. Project Structure
-
-project/
-│── app.py
-│── requirements.txt
-│── README.md
-│── Fraudulent_E-Commerce_Transaction_Data_2.csv
-│
-└── model/
-    │── preprocessing.py
-    │── logistic_regression.py
-    │── decision_tree.py
-    │── knn.py
-    │── naive_bayes.py
-    │── random_forest.py
-    │── xgboost_model.py
-    │── train_models.py
-
----
-
-## 8. Deployment
-The application was deployed using Streamlit Community Cloud by connecting the GitHub repository and selecting the app.py file for deployment.
-
----
-
-## 9. Conclusion
-This project demonstrates an end-to-end machine learning workflow including data preprocessing, model training, evaluation, and deployment. Ensemble models such as Random Forest and XGBoost were observed to perform best for fraud detection tasks due to their ability to capture complex patterns in transactional data.
-
+| Random Forest (Ensemble)  | Achieved strong overall performance by reducing overfitting through ensemble learning. |
+| XGBoost (Ensemble)  | Delivered the best performance with high AUC and MCC due to its boosting-based approach and regularization. |

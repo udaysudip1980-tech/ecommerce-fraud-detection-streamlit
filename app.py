@@ -40,9 +40,9 @@ This application trains machine learning models on historical e-commerce data
 and evaluates fraud detection performance on an uploaded dataset.
 """)
 
-# --------------------------------------------------
-# Train Models ONCE (Proper Train/Test Split)
-# --------------------------------------------------
+# Train models once when the app starts
+# This avoids retraining every time Streamlit refreshes
+
 @st.cache_resource
 def load_trained_models():
     df = pd.read_csv("Fraudulent_E-Commerce_Transaction_Data_2.csv")
@@ -60,9 +60,9 @@ def load_trained_models():
 
 models, encoders, scaler = load_trained_models()
 
-# --------------------------------------------------
-# Upload Dataset (TEST ONLY)
-# --------------------------------------------------
+# Upload a CSV file to test the trained models
+# Uploaded data is treated as unseen test data
+
 uploaded_file = st.file_uploader(
     "Upload test dataset (CSV)",
     type=["csv"]
@@ -78,9 +78,9 @@ if uploaded_file is not None:
     st.subheader("📄 Uploaded Dataset Preview")
     st.dataframe(df_test.head())
 
-    # --------------------------------------------------
-    # Preprocess TEST data (NO fitting)
-    # --------------------------------------------------
+# Preprocess uploaded test data
+# Important: encoders and scaler should NOT be fitted again
+
     try:
         X_test, X_test_scaled, y_test, _, _ = preprocess_dataframe(
             df_test,
@@ -92,9 +92,8 @@ if uploaded_file is not None:
         st.error(f"Preprocessing error: {e}")
         st.stop()
 
-    # --------------------------------------------------
-    # Model Selection
-    # --------------------------------------------------
+# Let the user choose which model to evaluate
+
     st.subheader("⚙️ Select Model")
 
     selected_model_name = st.selectbox(
@@ -104,17 +103,15 @@ if uploaded_file is not None:
 
     model = models[selected_model_name]
 
-    # --------------------------------------------------
-    # Choose correct feature space
-    # --------------------------------------------------
+# Some models require scaled features, others do not
+
     if selected_model_name in ["Logistic Regression", "KNN", "Naive Bayes"]:
         X_input = X_test_scaled
     else:
         X_input = X_test
 
-    # --------------------------------------------------
-    # Predictions
-    # --------------------------------------------------
+# Generate predictions on the test data
+
     y_pred = model.predict(X_input)
 
     if hasattr(model, "predict_proba"):
@@ -122,9 +119,8 @@ if uploaded_file is not None:
     else:
         y_prob = y_pred
 
-    # --------------------------------------------------
-    # Metrics
-    # --------------------------------------------------
+# Display common classification metrics
+
     st.subheader("📊 Evaluation Metrics")
 
     col1, col2, col3 = st.columns(3)
@@ -138,9 +134,8 @@ if uploaded_file is not None:
     col3.metric("F1 Score", round(f1_score(y_test, y_pred), 4))
     col3.metric("MCC", round(matthews_corrcoef(y_test, y_pred), 4))
 
-    # --------------------------------------------------
-    # Confusion Matrix
-    # --------------------------------------------------
+# Confusion matrix to visualize correct vs incorrect predictions
+
     st.subheader("🧮 Confusion Matrix")
 
     cm = confusion_matrix(y_test, y_pred)
@@ -152,9 +147,8 @@ if uploaded_file is not None:
 
     st.pyplot(fig)
 
-    # --------------------------------------------------
-    # Classification Report
-    # --------------------------------------------------
+# Detailed classification report for the selected model
+
     st.subheader("📄 Classification Report")
     st.text(classification_report(y_test, y_pred))
 
