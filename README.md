@@ -63,9 +63,9 @@ All models are implemented as Python source files (`.py`) as required.
 
 | ML Model | Observation |
 |--------|------------|
-| Logistic Regression | Performed well as a baseline model but struggled with capturing complex non-linear patterns in fraud data. |
-| Decision Tree | Able to model non-linear relationships but prone to overfitting. |
-| kNN | Sensitive to feature scaling and computationally expensive for large datasets. |
-| Naive Bayes | Fast and efficient but assumes feature independence, which limits performance. |
-| Random Forest(Ensemble)  | Achieved strong overall performance by reducing overfitting through ensemble learning. |
-| XGBoost(Ensemble)  | Delivered the best performance with high AUC and MCC due to its boosting-based approach and regularization. |
+| Logistic Regression | Gave high accuracy but missed many fraud cases, as shown by its very low recall. |
+| Decision Tree | Picked up more fraud cases than most models but overall performance was weaker and less reliable. |
+| kNN | Showed good accuracy, but struggled badly to identify fraud cases, leading to low recall and F1 score. |
+| Naive Bayes | Performed decently overall but made simplifying assumptions that limited its ability to detect fraud accurately. |
+| Random Forest(Ensemble)  | Balanced performance well with strong AUC and MCC, showing better handling of complex patterns. |
+| XGBoost(Ensemble)  | Delivered the most consistent and effective results, especially in identifying fraud, making it the best overall model. |

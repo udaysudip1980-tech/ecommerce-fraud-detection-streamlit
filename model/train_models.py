@@ -7,7 +7,7 @@ from model.random_forest import build as rf
 from model.xgboost_model import build as xgb
 
 def train_all_models(df_train):
-  
+
     # Fit encoders and scaler only on training data
     X_train, X_train_scaled, y_train, encoders, scaler = preprocess_dataframe(
         df_train, fit=True
@@ -18,8 +18,8 @@ def train_all_models(df_train):
         "Decision Tree": dt(),
         "KNN": knn(),
         "Naive Bayes": nb(),
-        "Random Forest": rf(),
-        "XGBoost": xgb()
+        "Random Forest(Ensemble)": rf(),
+        "XGBoost(Ensemble)": xgb()
     }
 
     for name, model in models.items():
