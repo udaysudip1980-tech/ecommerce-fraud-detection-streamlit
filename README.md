@@ -59,7 +59,7 @@ All models are implemented as Python source files (`.py`) as required.
 
 ---
 
-##  observations on the performance of each model on the chosen dataset. 
+##  Observations on the performance of each model on the chosen dataset. 
 
 | ML Model | Observation |
 |--------|------------|
